@@ -1,65 +1,59 @@
 import { WalletProvider } from "./context/WalletContext";
-import { useWalletContext } from "./context/useWalletContext";
+import AccountCard from "./components/Account/AccountCard";
+import SeedPhrasePrompt from "./components/Account/SeedPhrasePrompt";
 import './App.css';
-
-// Simple test component
-function TestComponent() {
-  const { seedPhrase, accounts, initError } = useWalletContext();
-  
-  console.log("=== TestComponent Render ===");
-  console.log("seedPhrase:", seedPhrase);
-  console.log("accounts:", accounts);
-  console.log("initError:", initError);
-  
-  return (
-    <div className="wallet-shell">
-      <div className="panel">
-        <h2>Wallet Debug Test</h2>
-        
-        <div className="card">
-          <h3>Seed Phrase Status</h3>
-          <p><strong>Exists:</strong> {seedPhrase ? "YES ✓" : "NO ✗"}</p>
-          {seedPhrase && (
-            <div className="address" style={{ marginTop: 10 }}>
-              {seedPhrase}
-            </div>
-          )}
-        </div>
-
-        <div className="card" style={{ marginTop: 16 }}>
-          <h3>Accounts</h3>
-          <p><strong>Count:</strong> {accounts.length}</p>
-          {accounts.map((acc, i) => (
-            <div key={i} style={{ marginTop: 8 }}>
-              <p><strong>Account {i}:</strong></p>
-              <div className="address" style={{ fontSize: 11 }}>
-                {acc.address}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="card" style={{ marginTop: 16, backgroundColor: '#1a1f27' }}>
-          <h3>Environment Check</h3>
-          <p><strong>ETH Mainnet RPC:</strong> {import.meta.env.VITE_ETH_MAINNET_RPC_URL ? '✓ Set' : '✗ Missing'}</p>
-          <p><strong>Sepolia RPC:</strong> {import.meta.env.VITE_SEPOLIA_RPC ? '✓ Set' : '✗ Missing'}</p>
-          <p><strong>Polygon Amoy RPC:</strong> {import.meta.env.VITE_POLYGON_AMOY_RPC ? '✓ Set' : '✗ Missing'}</p>
-          
-          {import.meta.env.VITE_ETH_MAINNET_RPC_URL && (
-            <div style={{ marginTop: 10, fontSize: 11, wordBreak: 'break-all' }}>
-              <strong>Sample RPC URL:</strong> {import.meta.env.VITE_ETH_MAINNET_RPC_URL.substring(0, 50)}...
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+import CreateAccount from "./components/Account/CreateAccount";
+import RecoverAccount from "./components/Account/RecoverAccount";
+import SendCrypto from "./components/Wallet/SendCrypto";
+import ChainSelector from "./components/Wallet/ChainSelector";
+import RecentActivity from "./components/Wallet/RecentActivity"
 
 function App() {
   return (
     <WalletProvider>
-      <TestComponent />
+      <div className="wallet-shell">
+        <div className="app-header">
+          <div className="app-title">
+            <div className="app-title-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
+                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <span>Crypto Wallet</span>
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="section">
+            <SeedPhrasePrompt />
+          </div>
+
+          <div className="section">
+            <ChainSelector />
+          </div>
+
+          <div className="section">
+            <AccountCard />
+          </div>
+
+          <div className="section">
+            <CreateAccount />
+          </div>
+
+          <div className="section">
+            <SendCrypto />
+          </div>
+          <div className="section">
+            <RecentActivity />
+          </div>
+
+          <div className="section">
+            <RecoverAccount />
+          </div>
+        </div>
+      </div>
     </WalletProvider>
   );
 }
