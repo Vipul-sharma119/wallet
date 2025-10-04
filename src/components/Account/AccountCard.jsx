@@ -66,7 +66,6 @@ export default function AccountCard() {
                 return 'SEPOLIA ETH';
         }
     }
-
     if (!selectedAccount) {
         return <div className="card"><strong>No account</strong></div>
     }

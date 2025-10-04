@@ -2,10 +2,15 @@ import { useWalletContext } from "../../context/useWalletContext";
 export default function CreateAccount() {
 
     const { addAccount, accounts, setSelectedAccount, selectedAccount } = useWalletContext();
+    
+    // Add this to debug
+    console.log('Current accounts:', accounts);
+    
     const handleChange = (e) => {
         const acc = accounts.find(a => a.address === e.target.value);
         setSelectedAccount(acc);
     }
+    
     // Function to format address for display
     const shortenAddress = (address) => {
         if (!address) return '';
@@ -35,11 +40,15 @@ export default function CreateAccount() {
                 >
                     <option value="">-- Select an account --</option>
                     {
-                        accounts.map(acc => (
-                            <option key={acc.index} value={acc.address}>
-                                {`#${acc.index} - ${shortenAddress(acc.address)} (Bal:${acc.balance})`}
-                            </option>
-                        ))
+                        accounts && accounts.length > 0 ? (
+                            accounts.map(acc => (
+                                <option key={acc.index} value={acc.address}>
+                                    {`#${acc.index} - ${shortenAddress(acc.address)} (Bal:${acc.balance})`}
+                                </option>
+                            ))
+                        ) : (
+                            <option disabled>No accounts available</option>
+                        )
                     }
                 </select>
 

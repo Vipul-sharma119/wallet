@@ -1,7 +1,7 @@
 export const CHAINS = {
   1: { 
     name: 'Ethereum Mainnet', 
-    rpc: import.meta.env.VITE_ETH_MAINNET_RPC,
+    rpc: import.meta.env.VITE_ETH_MAINNET_RPC_URL, // Fixed: added _URL
     explorerTx: 'https://etherscan.io/tx/'
   },
   11155111: { 
