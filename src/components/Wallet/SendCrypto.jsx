@@ -17,6 +17,20 @@ export default function SendCrypto() {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
 
+    // Function to get currency symbol based on active chain
+    const getCurrencySymbol = () => {
+        switch (activeChainId) {
+            case 80002:
+                return 'POL';
+            case 1:
+                return 'ETH';
+            case 11155111:
+                return 'Sepolia ETH';
+            default:
+                return 'ETH';
+        }
+    }
+
     const handleSend = async () => {
         if (!selectedAccount) {
             setStatus("No active account selected");
@@ -63,6 +77,7 @@ export default function SendCrypto() {
             setStatus(`Error: ${error.message || 'Transaction failed'} `);
         }
     }
+
     return (
         <div>
             <h3 style={{ marginTop: 0 }}>Send Crypto</h3>
@@ -78,7 +93,7 @@ export default function SendCrypto() {
                 <input
                     className="input"
                     type="number"
-                    placeholder={`Amount 'ETH'`}
+                    placeholder={`Amount (${getCurrencySymbol()})`}
                     value={amount}
                     onChange={e => setAmount(e.target.value)}
 
@@ -89,7 +104,7 @@ export default function SendCrypto() {
             {
                 CHAINS[activeChainId]?.faucetUrl && (
                     <p className="status">
-                        Need test ETH? Get some from the faucet:<a href={CHAINS[activeChainId].faucetUrl}> Click Here</a>
+                        Need test {getCurrencySymbol()}? Get some from the faucet:<a href={CHAINS[activeChainId].faucetUrl}> Click Here</a>
                     </p>
                 )
             }

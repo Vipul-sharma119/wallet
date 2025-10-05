@@ -24,7 +24,7 @@ function App() {
             <span>Crypto Wallet</span>
           </div>
         </div>
-
+    
         <div className="panel">
           <div className="section">
             <SeedPhrasePrompt />
