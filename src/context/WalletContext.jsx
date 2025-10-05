@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from "react"
 import { deriveAccount } from "../services/walletService";
 import { getBalance } from "../utils/getBalance";
-import { CHAINS } from "../services/chainConfig"
+import { CHAINS } from "../services/chainConfig";
+import { saveWalletData, loadWalletData, clearWalletData } from "../services/storageService";
 
 export const WalletContext = createContext();
 
@@ -18,51 +19,56 @@ export const WalletProvider = ({ children }) => {
             try {
                 console.log("🚀 Starting wallet initialization...");
                 
-                // Step 1: Check RPC URL
-                const rpcUrl = CHAINS[activeChainId]?.rpc;
-                console.log("RPC URL:", rpcUrl);
+                // Step 1: Check if wallet data exists in storage
+                const storedData = loadWalletData();
                 
+                let currentSeed;
+                let accountsToLoad = 1;
+                
+                if (storedData && storedData.seedPhrase) {
+                    // Load existing wallet
+                    console.log("✅ Found existing wallet in storage");
+                    currentSeed = storedData.seedPhrase;
+                    accountsToLoad = storedData.accountCount || 1;
+                } else {
+                    // Generate new wallet
+                    console.log("🆕 Generating new wallet...");
+                    const accountData = deriveAccount(null, 0);
+                    currentSeed = accountData.seedPhrase;
+                    
+                    // Save to storage
+                    saveWalletData(currentSeed, 1);
+                }
+                
+                // Step 2: Set seed phrase
+                setSeedPhrase(currentSeed);
+                
+                // Step 3: Derive all accounts
+                const rpcUrl = CHAINS[activeChainId]?.rpc;
                 if (!rpcUrl) {
                     throw new Error("RPC URL is not configured. Check your .env file.");
                 }
                 
-                // Step 2: Generate account
-                console.log("Generating new account...");
-                const accountData = deriveAccount(null, 0);
-                console.log("Account generated:", {
-                    hasPrivateKey: !!accountData.privateKey,
-                    address: accountData.address,
-                    hasSeedPhrase: !!accountData.seedPhrase
-                });
-                
-                const { seedPhrase: newSeed, privateKey, address } = accountData;
-                
-                if (!newSeed || !privateKey || !address) {
-                    throw new Error("Failed to generate account data");
+                const derivedAccounts = [];
+                for (let i = 0; i < accountsToLoad; i++) {
+                    const { privateKey, address } = deriveAccount(currentSeed, i);
+                    
+                    let balance = "0";
+                    try {
+                        balance = await getBalance(address, rpcUrl);
+                    } catch (balanceError) {
+                        console.warn(`Could not fetch balance for account ${i}:`, balanceError.message);
+                    }
+                    
+                    derivedAccounts.push({ privateKey, address, balance, index: i });
                 }
                 
-                // Step 3: Set seed phrase first
-                console.log("Setting seed phrase...");
-                setSeedPhrase(newSeed);
-                
-                // Step 4: Fetch balance
-                console.log("Fetching balance for:", address);
-                let balance = "0";
-                try {
-                    balance = await getBalance(address, rpcUrl);
-                    console.log("Balance fetched:", balance);
-                } catch (balanceError) {
-                    console.warn("Could not fetch balance, using default:", balanceError.message);
-                    // Continue even if balance fetch fails
-                }
-                
-                // Step 5: Create and set account
-                const firstAccount = { privateKey, address, balance, index: 0 };
-                console.log("Setting first account:", firstAccount.address);
-                setSelectedAccount(firstAccount);
-                setAccounts([firstAccount]);
+                // Step 4: Set accounts and select the first one
+                setAccounts(derivedAccounts);
+                setSelectedAccount(derivedAccounts[0]);
                 
                 console.log("✅ Wallet initialization complete!");
+                console.log(`Loaded ${derivedAccounts.length} account(s)`);
                 
             } catch (error) {
                 console.error("❌ Error initializing wallet:", error);
@@ -71,7 +77,7 @@ export const WalletProvider = ({ children }) => {
         }
 
         initWallet();
-    }, []) // Empty dependency array - only run once
+    }, []); // Empty dependency array - only run once
 
     const addAccount = async () => {
         try {
@@ -80,11 +86,14 @@ export const WalletProvider = ({ children }) => {
             const balance = await getBalance(address, CHAINS[activeChainId].rpc);
             const newAccount = { privateKey, address, balance, index: newIndex };
             const updatedAccounts = [...accounts, newAccount];
-            setAccounts(updatedAccounts)
+            setAccounts(updatedAccounts);
+            
+            // Update storage with new account count
+            saveWalletData(seedPhrase, updatedAccounts.length);
         } catch (error) {
             console.error("Error adding account:", error);
         }
-    }
+    };
 
     const changeNetwork = async (newChainId) => {
         try {
@@ -95,17 +104,26 @@ export const WalletProvider = ({ children }) => {
 
             setActiveChainId(newChainId);
 
-            const updateAccounts = await Promise.all(
+            const updatedAccounts = await Promise.all(
                 accounts.map(async (acc) => {
                     const balance = await getBalance(acc.address, CHAINS[newChainId].rpc);
                     return { ...acc, balance };
                 })
-            )
-            setAccounts(updateAccounts)
+            );
+            setAccounts(updatedAccounts);
         } catch (error) {
             console.error("Error changing network:", error);
         }
-    }
+    };
+
+    const resetWallet = () => {
+        // Clear storage and reset state
+        clearWalletData();
+        setAccounts([]);
+        setSeedPhrase(null);
+        setSelectedAccount(null);
+        window.location.reload(); // Reload to reinitialize
+    };
 
     return (
         <WalletContext.Provider
@@ -120,6 +138,7 @@ export const WalletProvider = ({ children }) => {
                 changeNetwork,
                 setAccounts,
                 addAccount,
+                resetWallet,
                 initError
             }}
         >
