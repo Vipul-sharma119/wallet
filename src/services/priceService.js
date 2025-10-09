@@ -17,7 +17,7 @@ export async function getInrPrices() {
             return { ethInr, polInr };
         }
         throw new Error('Primary ids missing');
-    } catch (_) {
+    } catch ( ) {
         // Fallback to legacy MATIC id for POL pricing if needed
         const fallbackUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,matic-network&vs_currencies=inr';
         const data = await fetchJson(fallbackUrl);
@@ -44,7 +44,7 @@ export async function getUsdPrices() {
             };
         }
         throw new Error('Primary ids missing');
-    } catch (_) {
+    } catch ( ) {
         const url = base + 'ethereum,matic-network';
         const data = await fetchJson(url);
         const eth = data?.ethereum ?? {};

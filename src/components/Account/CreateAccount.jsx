@@ -54,7 +54,7 @@ export default function CreateAccount() {
 
                 <div className="row" style={{ gap: '8px' }}>
                     <button className="btn btn-primary" onClick={addAccount}>
-                        Create Account
+                        Generate New wallet
                     </button>
 
                     {selectedAccount && (

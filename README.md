@@ -37,7 +37,7 @@ Get your free Alchemy API key at [alchemy.com](https://www.alchemy.com/)
 
 2. **Switch networks** using the dropdown. Your balance updates automatically.
 
-3. **Create more accounts** by clicking "Create Account". All accounts derive from your seed phrase.
+3. **Generate new address** by clicking "Generate new adress". All accounts derive from your seed phrase.
 
 4. **Send crypto** by entering a recipient address and amount. Click send and wait for confirmation.
 
@@ -70,27 +70,4 @@ src/
 - Private keys live in memory (React state) while the app runs
 - Always test on Sepolia testnet before using real ETH
 - Never share your seed phrase or private keys with anyone
-
-## Adding Networks
-
-Want to add more chains? Edit `src/services/chainConfig.js`:
-
-```javascript
-export const CHAINS = {
-  // Add your network here
-  137: { 
-    name: 'Polygon Mainnet', 
-    rpc: 'YOUR_RPC_URL',
-    explorerTx: 'https://polygonscan.com/tx/'
-  }
-};
-```
-
-## Troubleshooting
-
-**"Failed to load balance"** → Check your `.env` file has valid API keys
-
-**Transaction fails** → Make sure you have enough balance and you're on the right network
-
-**Can't see seed phrase** → It only shows once after creation. Use recovery if you saved it.
 
