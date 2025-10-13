@@ -131,10 +131,6 @@ a:hover {
   justify-content: flex-end;
 }
 
-.row.between {
-  justify-content: space-between;
-}
-
 .row.stack {
   flex-direction: column;
   align-items: stretch;
@@ -210,7 +206,7 @@ textarea:focus {
   background: #121723;
 }
 
-
+/* Cards and text bits */
 .card {
   background: #11151d;
   border: 1px solid var(--border);
@@ -233,13 +229,7 @@ textarea:focus {
   word-break: break-word;
 }
 
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-
+/* Form layout improvements */
 .form-group {
   margin-bottom: 16px;
 }
@@ -248,7 +238,7 @@ textarea:focus {
   margin-bottom: 0;
 }
 
-
+/* Ensure inputs don't overflow */
 .input,
 input[type="text"],
 input[type="number"],
@@ -258,13 +248,46 @@ textarea {
   box-sizing: border-box;
 }
 
-
+/* Better spacing for stacked elements */
 .row.stack>* {
   margin-bottom: 8px;
 }
 
 .row.stack>*:last-child {
   margin-bottom: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .wallet-shell {
+    margin: 24px auto;
+    padding: 0 12px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .row {
+    gap: 8px;
+  }
+
+  .row.stack {
+    gap: 0;
+  }
+
+  /* Ensure select dropdowns don't overflow on mobile */
+  select.input {
+    font-size: 14px;
+    max-width: 100%;
+    word-break: break-all;
+  }
+
+  /* Make buttons more touch-friendly on mobile */
+  .btn {
+    padding: 12px 16px;
+    font-size: 16px;
+  }
 }
 
 .spacer-sm {
@@ -278,115 +301,3 @@ textarea {
 .spacer-lg {
   height: 20px;
 }
-
-/* Footer */
-.footer {
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  text-align: center;
-}
-
-.footer-links {
-  margin-bottom: 12px;
-}
-
-.footer-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s ease;
-  font-size: 0.9rem;
-}
-
-.footer-link:hover {
-  color: var(--mm-orange);
-}
-
-.footer-signature {
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
-.footer-signature .footer-link {
-  color: var(--mm-orange);
-  font-weight: 600;
-}
-
-.footer-signature .footer-link:hover {
-  color: var(--mm-orange-600);
-}
-
-
-
-/* Large Desktop (1200px+) */
-@media (min-width: 1200px) {
-  .wallet-shell {
-    max-width: 1100px;
-  }
-
-  .app-title {
-    font-size: 2rem;
-  }
-
-  .panel {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
-    padding: 40px;
-  }
-
-  .section:first-child {
-    grid-column: 1 / -1;
-  }
-
-  /* Network selector - full width */
-  .section:nth-child(2) {
-    grid-column: 1 / -1;
-  }
-
-  /* Account card - spans 2 columns */
-  .section:nth-child(3) {
-    grid-column: 1 / 3;
-  }
-
-  /* Create Account - right column, spans 2 rows */
-  .section:nth-child(4) {
-    grid-column: 3 / 4;
-    grid-row: 3 / 5;
-  }
-
-  /* Send Crypto - spans 2 columns */
-  .section:nth-child(5) {
-    grid-column: 1 / 3;
-  }
-
-  /* Recent Activity - spans 2 columns */
-  .section:nth-child(6) {
-    grid-column: 1 / 3;
-  }
-
-  /* Recover Account */
-  .section:nth-child(7) {
-    grid-column: 1 / 2;
-  }
-
-  /* Wallet Settings */
-  .section:nth-child(8) {
-    grid-column: 2 / 3;
-  }
-
-  .section h3 {
-    font-size: 1.2rem;
-  }
-
-  .card {
-    padding: 18px;
-  }
-
-  .footer {
-    margin-top: 56px;
-  }
-}
-
