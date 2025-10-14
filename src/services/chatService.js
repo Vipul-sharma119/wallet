@@ -4,6 +4,7 @@ import axios from 'axios';
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY; 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
+
 const SYSTEM_PROMPT = `You are a helpful and friendly cryptocurrency assistant for beginners. Your goal is to:
 - Explain crypto concepts in simple, easy-to-understand terms
 - Be concise but informative (2-3 sentences usually)
