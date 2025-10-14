@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useWalletContext } from '../../context/useWalletContext';
 import { deriveAccount } from "../../services/walletService";
 import { getBalance } from "../../utils/getBalance";
 import { CHAINS } from "../../services/chainConfig";
-import { saveWalletData } from "../../services/storageService";
 
 export default function RecoverAccount() {
-    const { setAccounts, setSeedPhrase, setSelectedAccount } = useWalletContext();
+    const { setAccounts, setSeedPhrase } = useWalletContext();
     const [recoveryPhrase, setRecoveryPhrase] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -14,19 +13,10 @@ export default function RecoverAccount() {
 
     const handleRecover = async () => {
         try {
-            setLoading(true);
-            setError("");
-            
-            const trimmedPhrase = recoveryPhrase.trim();
-            
-            // Validate seed phrase (basic check)
-            const wordCount = trimmedPhrase.split(/\s+/).length;
-            if (wordCount !== 12 && wordCount !== 24) {
-                throw new Error("Invalid seed phrase. Must be 12 or 24 words.");
-            }
-            
+            setLoading(true)
+            setError("")
             const accountList = [];
-            const firstAccount = deriveAccount(trimmedPhrase, 0);
+            const firstAccount = deriveAccount(recoveryPhrase.trim(), 0);
             const balance = await getBalance(firstAccount.address, CHAINS[1].rpc);
 
             accountList.push({
@@ -34,24 +24,19 @@ export default function RecoverAccount() {
                 address: firstAccount.address,
                 balance,
                 index: 0
-            });
-            
-            // Save to storage
-            saveWalletData(trimmedPhrase, 1);
-            
+            })
             setAccounts(accountList);
-            setSeedPhrase(trimmedPhrase);
-            setSelectedAccount(accountList[0]);
-            setShowInput(false);
-            setRecoveryPhrase("");
+            setSeedPhrase(recoveryPhrase.trim())
+            setShowInput(false)
+            setRecoveryPhrase("")
         } catch (error) {
-            console.error(error);
-            setError(error.message || "Failed to recover account. Check your seed phrase.");
+            console.error(error)
+            setError("Failed to recover account.Check your seed phrase")
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
 
+    }
     return (
         <div>
             <h3 style={{ marginTop: 0 }}>Account Recovery</h3>
@@ -71,7 +56,7 @@ export default function RecoverAccount() {
                         <textarea
                             className="input"
                             rows="3"
-                            placeholder="Enter your 12 or 24 word seed phrase"
+                            placeholder="Enter your seed phrase"
                             value={recoveryPhrase}
                             onChange={(e) => setRecoveryPhrase(e.target.value)}
                         />

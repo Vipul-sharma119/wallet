@@ -14,7 +14,8 @@ import RecentActivity from "./components/Wallet/RecentActivity";
 import TokenList from "./components/Wallet/TokenList";
 import ImportToken from "./components/Wallet/ImportToken";
 import WalletSettings from "./components/Wallet/WalletSettings";
-import ChatAssistant from "./components/Chat/ChatAssistant";
+// FIX: Change this import path to match actual file location (lowercase 'chat')
+import ChatAssistant from "./components/chat/ChatAssistant";
 
 function AppContent() {
   const { isLocked, hasWallet, createWalletWithPassword, unlockWallet, lockWallet } = useWalletContext();
