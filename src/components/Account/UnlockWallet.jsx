@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import './UnlockWallet.css';
 
-const UnlockWallet = ({ onUnlock, error: externalError }) => {
+const UnlockWallet = ({ onUnlock, error: externalError, onRecoverWallet }) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showRecovery, setShowRecovery] = useState(false);
+    const [recoveryPhrase, setRecoveryPhrase] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,14 +33,188 @@ const UnlockWallet = ({ onUnlock, error: externalError }) => {
         }
     };
 
+    const handleRecovery = async (e) => {
+        e.preventDefault();
+
+        if (!recoveryPhrase.trim()) {
+            setError('Please enter your seed phrase');
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            setError('New password must be at least 8 characters');
+            return;
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
+        setError('');
+        setIsLoading(true);
+
+        try {
+            await onRecoverWallet(recoveryPhrase.trim(), newPassword);
+            setShowRecovery(false);
+            setRecoveryPhrase('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+        } catch (err) {
+            setError(err.message || 'Failed to recover wallet. Please check your seed phrase.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const toggleRecoveryMode = () => {
+        setShowRecovery(!showRecovery);
+        setError('');
+        setPassword('');
+        setRecoveryPhrase('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+    };
+
     const displayError = error || externalError;
 
+    // --- Recovery mode ---
+    if (showRecovery) {
+        return (
+            <div className="unlock-wallet-overlay">
+                <div className="unlock-wallet-container">
+                    <div className="unlock-header">
+                        <div className="unlock-logo">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </div>
+                        <h1>Recover Wallet</h1>
+                        <p>Enter your seed phrase to recover your wallet</p>
+                    </div>
+
+                    <form onSubmit={handleRecovery} className="unlock-form">
+                        <div className="input-group">
+                            <label htmlFor="recoveryPhrase">Seed Phrase</label>
+                            <textarea
+                                id="recoveryPhrase"
+                                value={recoveryPhrase}
+                                onChange={(e) => setRecoveryPhrase(e.target.value)}
+                                placeholder="Enter your 12-word seed phrase"
+                                rows="3"
+                                disabled={isLoading}
+                                className="password-input-wrapper"
+                                style={{
+                                    width: '100%',
+                                    padding: '14px 16px',
+                                    background: '#0f1218',
+                                    border: '1px solid #2a2f36',
+                                    borderRadius: '10px',
+                                    fontSize: '14px',
+                                    color: '#e6e6e6',
+                                    resize: 'vertical',
+                                    fontFamily: 'inherit'
+                                }}
+                            />
+                        </div>
+
+                        <div className="input-group">
+                            <label htmlFor="newPassword">New Password</label>
+                            <div className="password-input-wrapper">
+                                <input
+                                    type={showNewPassword ? 'text' : 'password'}
+                                    id="newPassword"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="Enter new password (min. 8 characters)"
+                                    disabled={isLoading}
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password"
+                                    onClick={() => setShowNewPassword(!showNewPassword)}
+                                    disabled={isLoading}
+                                >
+                                    {showNewPassword ? '🙈' : '👁️'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="input-group">
+                            <label htmlFor="confirmNewPassword">Confirm New Password</label>
+                            <div className="password-input-wrapper">
+                                <input
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    id="confirmNewPassword"
+                                    value={confirmNewPassword}
+                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                    placeholder="Re-enter new password"
+                                    disabled={isLoading}
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    disabled={isLoading}
+                                >
+                                    {showConfirmPassword ? '🙈' : '👁️'}
+                                </button>
+                            </div>
+                            {displayError && (
+                                <div className="error-message">
+                                    ⚠️ {displayError}
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="unlock-button"
+                            disabled={isLoading || !recoveryPhrase.trim() || !newPassword || !confirmNewPassword}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <span className="spinner"></span> Recovering...
+                                </>
+                            ) : (
+                                <>🔑 Recover Wallet</>
+                            )}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={toggleRecoveryMode}
+                            disabled={isLoading}
+                            style={{
+                                width: '100%',
+                                marginTop: '12px',
+                                padding: '12px',
+                                background: 'transparent',
+                                border: '1px solid #2a2f36',
+                                borderRadius: '10px',
+                                color: '#a0a8b8',
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            Back to Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    // --- Login mode ---
     return (
         <div className="unlock-wallet-overlay">
             <div className="unlock-wallet-container">
                 <div className="unlock-header">
                     <div className="unlock-logo">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
                             <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
                             <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -63,27 +243,11 @@ const UnlockWallet = ({ onUnlock, error: externalError }) => {
                                 onClick={() => setShowPassword(!showPassword)}
                                 disabled={isLoading}
                             >
-                                {showPassword ? (
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M3 3L21 21M10.5 10.677A2 2 0 1013.5 13.677" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                        <path d="M7.362 7.561C5.68 8.74 4.279 10.42 3 12c1.889 2.991 5.282 6 9 6 1.55 0 3.043-.523 4.395-1.35M12 6C15.718 6 19.111 9.01 21 12c-.583.924-1.225 1.773-1.91 2.537" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                    </svg>
-                                ) : (
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <path d="M12 5C8.24 5 4.82 7.58 3 12c1.82 4.42 5.24 7 9 7s7.18-2.58 9-7c-1.82-4.42-5.24-7-9-7z" stroke="currentColor" strokeWidth="2" />
-                                        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
-                                    </svg>
-                                )}
+                                {showPassword ? '🙈' : '👁️'}
                             </button>
                         </div>
                         {displayError && (
-                            <div className="error-message">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                                    <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                                {displayError}
-                            </div>
+                            <div className="error-message">⚠️ {displayError}</div>
                         )}
                     </div>
 
@@ -94,34 +258,36 @@ const UnlockWallet = ({ onUnlock, error: externalError }) => {
                     >
                         {isLoading ? (
                             <>
-                                <span className="spinner"></span>
-                                Unlocking...
+                                <span className="spinner"></span> Unlocking...
                             </>
                         ) : (
-                            <>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                    <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                    <path d="M16 9V7a4 4 0 10-8 0v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                                </svg>
-                                Unlock Wallet
-                            </>
+                            <>🔓 Unlock Wallet</>
                         )}
                     </button>
-                </form>
 
-                <div className="unlock-footer">
-                    <p className="help-text">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                            <path d="M12 16v-4M12 8h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                        Forgot your password? You'll need to restore your wallet using your seed phrase.
-                    </p>
-                </div>
+                    <button
+                        type="button"
+                        onClick={toggleRecoveryMode}
+                        disabled={isLoading}
+                        style={{
+                            width: '100%',
+                            marginTop: '12px',
+                            padding: '12px',
+                            background: 'transparent',
+                            border: '1px solid #2a2f36',
+                            borderRadius: '10px',
+                            color: '#a0a8b8',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        Forgot Password?
+                    </button>
+                </form>
             </div>
         </div>
     );
 };
 
 export default UnlockWallet;
-
