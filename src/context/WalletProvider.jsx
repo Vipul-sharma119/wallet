@@ -10,7 +10,8 @@ import {
     isWalletInitialized,
     updateLastUnlock,
     saveImportedTokens,
-    loadImportedTokens
+    loadImportedTokens,
+    clearWalletData // Import the clearWalletData function
 } from "../services/storageService";
 import { WalletContext } from "./WalletContext";
 
@@ -140,6 +141,32 @@ export const WalletProvider = ({ children }) => {
         setSelectedAccount(null);
         setTokenBalances({})
     }
+
+    // NEW: Reset Wallet Function
+    const resetWallet = () => {
+        try {
+            // 1. Clear all state
+            setAccounts([]);
+            setSeedPhrase(null);
+            setSelectedAccount(null);
+            setImportedTokens([]);
+            setTokenBalances({});
+            setActiveChainId(1);
+            setActiveAccountIndex(0);
+            
+            // 2. Clear localStorage
+            clearWalletData();
+            
+            // 3. Reset wallet status
+            setIsLocked(true);
+            setHasWallet(false);
+            
+            console.log('Wallet reset successfully');
+        } catch (error) {
+            console.error('Error resetting wallet:', error);
+            throw new Error('Failed to reset wallet');
+        }
+    };
 
     const addAccount = async () => {
 
@@ -283,7 +310,8 @@ export const WalletProvider = ({ children }) => {
                 createWalletWithPassword,
                 unlockWallet,
                 lockWallet,
-                recoverWalletWithPassword
+                recoverWalletWithPassword,
+                resetWallet // Added to context
             }}
         >
             {children}
