@@ -206,7 +206,6 @@ textarea:focus {
   background: #121723;
 }
 
-/* Cards and text bits */
 .card {
   background: #11151d;
   border: 1px solid var(--border);
@@ -229,7 +228,7 @@ textarea:focus {
   word-break: break-word;
 }
 
-/* Form layout improvements */
+
 .form-group {
   margin-bottom: 16px;
 }
@@ -238,7 +237,7 @@ textarea:focus {
   margin-bottom: 0;
 }
 
-/* Ensure inputs don't overflow */
+
 .input,
 input[type="text"],
 input[type="number"],
@@ -248,7 +247,7 @@ textarea {
   box-sizing: border-box;
 }
 
-/* Better spacing for stacked elements */
+
 .row.stack>* {
   margin-bottom: 8px;
 }
@@ -257,7 +256,7 @@ textarea {
   margin-bottom: 0;
 }
 
-/* Mobile responsiveness */
+
 @media (max-width: 768px) {
   .wallet-shell {
     margin: 24px auto;
@@ -276,14 +275,14 @@ textarea {
     gap: 0;
   }
 
-  /* Ensure select dropdowns don't overflow on mobile */
+  
   select.input {
     font-size: 14px;
     max-width: 100%;
     word-break: break-all;
   }
 
-  /* Make buttons more touch-friendly on mobile */
+  
   .btn {
     padding: 12px 16px;
     font-size: 16px;

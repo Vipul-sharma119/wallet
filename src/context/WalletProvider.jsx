@@ -96,6 +96,43 @@ export const WalletProvider = ({ children }) => {
         }
     }
 
+    const recoverWalletWithPassword = async (recoveryPhrase, newPassword) => {
+        try {
+            // Validate the seed phrase by trying to derive an account
+            const { privateKey, address } = deriveAccount(recoveryPhrase.trim(), 0);
+            
+            // Encrypt the seed phrase with the new password
+            const encryptedSeed = await encryptData(recoveryPhrase.trim(), newPassword);
+
+            // Save the encrypted wallet
+            const saved = saveEncryptedWallet({
+                encryptedSeedPhrase: encryptedSeed,
+                createdAt: Date.now()
+            });
+
+            if (!saved) {
+                throw new Error('Failed to save recovered wallet');
+            }
+
+            // Get balance and set up the account
+            const balance = await getBalance(address, CHAINS[activeChainId].rpc);
+            const firstAccount = { privateKey, address, balance, index: 0 };
+            
+            setSelectedAccount(firstAccount);
+            setSeedPhrase(recoveryPhrase.trim());
+            setAccounts([firstAccount]);
+            setIsLocked(false);
+            setHasWallet(true);
+            updateLastUnlock();
+
+            const tokens = loadImportedTokens();
+            setImportedTokens(tokens);
+        } catch (error) {
+            console.error('Error recovering wallet:', error);
+            throw new Error('Invalid seed phrase or recovery failed');
+        }
+    };
+
     const lockWallet = () => {
         setIsLocked(true);
         setSeedPhrase(null);
@@ -222,6 +259,7 @@ export const WalletProvider = ({ children }) => {
             updateTokenBalances(selectedAccount.address, activeChainId);
         }
     }, [selectedAccount, activeChainId, importedTokens])
+    
     return (
         <WalletContext.Provider
             value={{
@@ -244,7 +282,8 @@ export const WalletProvider = ({ children }) => {
                 hasWallet,
                 createWalletWithPassword,
                 unlockWallet,
-                lockWallet
+                lockWallet,
+                recoverWalletWithPassword
             }}
         >
             {children}

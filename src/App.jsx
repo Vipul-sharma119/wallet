@@ -7,7 +7,6 @@ import AccountCard from "./components/Account/AccountCard";
 import SeedPhrasePrompt from "./components/Account/SeedPhrasePrompt";
 import './App.css';
 import CreateAccount from "./components/Account/CreateAccount";
-import RecoverAccount from "./components/Account/RecoverAccount";
 import SendCrypto from "./components/Wallet/SendCrypto";
 import ChainSelector from "./components/Wallet/ChainSelector";
 import RecentActivity from "./components/Wallet/RecentActivity";
@@ -18,7 +17,7 @@ import WalletSettings from "./components/Wallet/WalletSettings";
 import ChatAssistant from "./components/chat/ChatAssistant";
 
 function AppContent() {
-  const { isLocked, hasWallet, createWalletWithPassword, unlockWallet, lockWallet } = useWalletContext();
+  const { isLocked, hasWallet, createWalletWithPassword, unlockWallet, lockWallet, recoverWalletWithPassword } = useWalletContext();
   const [showSeedPhrase, setShowSeedPhrase] = useState(false);
   const [newSeedPhrase, setNewSeedPhrase] = useState('');
 
@@ -40,6 +39,16 @@ function AppContent() {
       await unlockWallet(password);
     } catch (error) {
       console.error('Unlock failed:', error);
+      throw error;
+    }
+  };
+
+  // Handle wallet recovery
+  const handleRecoverWallet = async (seedPhrase, newPassword) => {
+    try {
+      await recoverWalletWithPassword(seedPhrase, newPassword);
+    } catch (error) {
+      console.error('Recovery failed:', error);
       throw error;
     }
   };
@@ -98,9 +107,9 @@ function AppContent() {
     );
   }
 
-  // Case 3: Wallet locked - Show unlock screen
+  // Case 3: Wallet locked - Show unlock screen (now includes recovery option)
   if (isLocked) {
-    return <UnlockWallet onUnlock={handleUnlock} />;
+    return <UnlockWallet onUnlock={handleUnlock} onRecoverWallet={handleRecoverWallet} />;
   }
 
   // Case 4: Wallet unlocked - Show main wallet interface
@@ -165,9 +174,7 @@ function AppContent() {
           <TokenList />
         </div>
 
-        <div className="section">
-          <RecoverAccount />
-        </div>
+        {/* RecoverAccount component removed from here */}
 
         <div className="section">
           <WalletSettings />
