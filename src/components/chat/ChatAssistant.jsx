@@ -186,7 +186,7 @@ const ChatAssistant = () => {
                 <div className="suggestions-grid">
                     <button
                         className="suggestion-btn"
-                        onClick={() => setInputValue("What is cryptocurrency?")}
+                        onClick={() =>  setInputValue("What is cryptocurrency?")}
                     >
                         What is crypto?
                     </button>

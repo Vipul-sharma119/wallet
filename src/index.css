@@ -59,7 +59,7 @@ a:hover {
 /* App shell - Enhanced for Desktop */
 .wallet-shell {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 48px auto;
   padding: 0 32px;
 }
@@ -75,11 +75,11 @@ a:hover {
 .app-title {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   font-weight: 700;
   font-size: 1.75rem;
   letter-spacing: 0.3px;
-  color: var(--text);
+  color: var(--text); 
 }
 
 .app-title-badge {
