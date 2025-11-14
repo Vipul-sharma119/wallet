@@ -160,7 +160,7 @@ const SetupPassword = ({ onSetupComplete }) => {
                             </li>
                         </ul>
                         <p style={{ fontSize: '12px', color: '#7f8c8d', marginTop: '12px', marginBottom: '0' }}>
-                            💡 Tip: Use a mix of letters, numbers, and symbols for a stronger password
+                            Tip: Use a mix of letters, numbers, and symbols for a stronger password
                         </p>
                     </div>
 

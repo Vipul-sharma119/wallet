@@ -41,7 +41,7 @@ export default function WalletSettings() {
             
             <div className="card" style={{ backgroundColor: '#1a1515', border: '1px solid #3a2020', marginBottom: '16px' }}>
                 <p style={{ fontSize: '14px', color: '#ffaaaa', marginTop: 0, fontWeight: 600 }}>
-                    ⚠️ Danger Zone
+                     
                 </p>
                 <p style={{ fontSize: '13px', marginBottom: 12, lineHeight: 1.5 }}>
                     This will permanently delete your wallet from this browser. 
@@ -56,7 +56,7 @@ export default function WalletSettings() {
                         border: '1px solid #5a3030'
                     }}
                 >
-                    🗑️ Reset Wallet
+                    Reset Wallet
                 </button>
             </div>
 
@@ -85,7 +85,7 @@ export default function WalletSettings() {
                         boxShadow: '0 16px 40px rgba(196, 30, 58, 0.3)'
                     }}>
                         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                            <div style={{ fontSize: '48px', marginBottom: '12px' }}>⚠️</div>
+                            <div style={{ fontSize: '48px', marginBottom: '12px' }}></div>
                             <h2 style={{ margin: '0 0 8px 0', color: '#ff4444', fontSize: '24px' }}>
                                 Reset Wallet?
                             </h2>
@@ -108,7 +108,7 @@ export default function WalletSettings() {
                                     fontWeight: 600,
                                     color: '#f6851b'
                                 }}>
-                                    🔑 Your Seed Phrase (Last Chance!)
+                                     Your Seed Phrase (Last Chance!)
                                 </p>
                                 <div style={{
                                     background: '#0b0f16',
@@ -222,7 +222,7 @@ export default function WalletSettings() {
                                     opacity: confirmText.toLowerCase() === "reset wallet" && !isResetting ? 1 : 0.5
                                 }}
                             >
-                                {isResetting ? 'Resetting...' : '🗑️ Reset Wallet'}
+                                {isResetting ? 'Resetting...' : 'Reset Wallet'}
                             </button>
                         </div>
                     </div>

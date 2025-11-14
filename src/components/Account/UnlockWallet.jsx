@@ -164,7 +164,7 @@ const UnlockWallet = ({ onUnlock, error: externalError, onRecoverWallet }) => {
                             </div>
                             {displayError && (
                                 <div className="error-message">
-                                    ⚠️ {displayError}
+                                    {displayError}
                                 </div>
                             )}
                         </div>
@@ -179,7 +179,7 @@ const UnlockWallet = ({ onUnlock, error: externalError, onRecoverWallet }) => {
                                     <span className="spinner"></span> Recovering...
                                 </>
                             ) : (
-                                <>🔑 Recover Wallet</>
+                                <>Recover Wallet</>
                             )}
                         </button>
 
@@ -247,7 +247,7 @@ const UnlockWallet = ({ onUnlock, error: externalError, onRecoverWallet }) => {
                             </button>
                         </div>
                         {displayError && (
-                            <div className="error-message">⚠️ {displayError}</div>
+                            <div className="error-message"> {displayError}</div>
                         )}
                     </div>
 
@@ -261,7 +261,7 @@ const UnlockWallet = ({ onUnlock, error: externalError, onRecoverWallet }) => {
                                 <span className="spinner"></span> Unlocking...
                             </>
                         ) : (
-                            <>🔓 Unlock Wallet</>
+                            <>Unlock Wallet</>
                         )}
                     </button>
 

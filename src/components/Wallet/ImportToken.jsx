@@ -108,7 +108,7 @@ export default function ImportToken() {
             </form>
 
             <div style={{ marginTop: '12px', fontSize: '12px', color: '#666' }}>
-                <p>⚠️ Make sure you're importing a valid ERC20 token contract address.</p>
+                <p> Make sure you're importing a valid ERC20 token contract address.</p>
                 <p>The token will be added to your wallet and you can view its balance.</p>
             </div>
         </div>

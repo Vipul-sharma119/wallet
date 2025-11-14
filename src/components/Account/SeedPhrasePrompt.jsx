@@ -35,7 +35,7 @@ export default function SeedPhrasePrompt() {
 
     return (
         <div className="card" style={{ backgroundColor: '#1a1f27', border: '1px solid var(--mm-orange)' }}>
-            <h3 style={{ marginTop: 0, color: 'var(--mm-orange)' }}>⚠️ Save Your Seed Phrase</h3>
+            <h3 style={{ marginTop: 0, color: 'var(--mm-orange)' }}>Save Your Seed Phrase</h3>
             <p>
                 This phrase will not be shown again. Store it securely — if lost, you
                 cannot recover your wallet.
